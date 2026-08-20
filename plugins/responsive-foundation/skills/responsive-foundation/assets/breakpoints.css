@@ -1,0 +1,48 @@
+/* Breakpoint tokens — the single source of truth for the CSS side.
+ *
+ * REQUIRES a build-time transform for @custom-media:
+ *   - Lightning CSS  → drafts: { customMedia: true }   (Vite: css.lightningcss)
+ *   - PostCSS        → postcss-custom-media
+ * These are inlined at build time. Nothing in this file ships to the browser as
+ * @custom-media, so there is no runtime cost and no browser support question.
+ *
+ * The TS mirror in breakpoints.ts must stay in sync. Do not edit one side alone —
+ * scripts/audit-breakpoints.mjs fails the build when they drift.
+ *
+ * rem, not px: a user who raises their default font size gets a proportionally
+ * reflowed layout instead of large text crammed into a desktop grid.
+ */
+
+@custom-media --sm  (width >= 40rem);   /*  640px */
+@custom-media --md  (width >= 48rem);   /*  768px */
+@custom-media --lg  (width >= 64rem);   /* 1024px */
+@custom-media --xl  (width >= 80rem);   /* 1280px */
+@custom-media --2xl (width >= 96rem);   /* 1536px */
+
+/* Exclusive `<`, deliberately. With `<=` a viewport of exactly 48rem matches both
+ * --below-md and --md, and both rule sets apply — the winner is then decided by
+ * source order, which is not a decision anyone made on purpose. */
+@custom-media --below-sm (width < 40rem);
+@custom-media --below-md (width < 48rem);
+@custom-media --below-lg (width < 64rem);
+
+/* Capability queries. When the real question is the input device, ask about the
+ * input device: a 1024px touch tablet is "desktop width" but needs tap targets,
+ * not a hover menu. Width is a bad proxy for how the thing is being touched. */
+@custom-media --touch     (pointer: coarse);
+@custom-media --hover-ok  (hover: hover) and (pointer: fine);
+@custom-media --motion-ok (prefers-reduced-motion: no-preference);
+@custom-media --dark      (prefers-color-scheme: dark);
+
+:root {
+  /* Mirror of the values above, for JS and for the audit script.
+   * These CANNOT be used in @media conditions — `@media (width >= var(--bp-md))`
+   * parses without error and never matches. Custom properties resolve at
+   * computed-value time, long after media conditions are evaluated.
+   * Use them for calc(), container sizing, and reading from JS. */
+  --bp-sm: 40rem;
+  --bp-md: 48rem;
+  --bp-lg: 64rem;
+  --bp-xl: 80rem;
+  --bp-2xl: 96rem;
+}

@@ -1,0 +1,10 @@
+{
+  "name": "responsive-foundation",
+  "version": "0.1.0",
+  "description": "Set up or audit a project's responsive layout foundation: breakpoint tokens, fluid type and space scales, container-query-first components, typed matchMedia hooks, and viewport regression tests.",
+  "author": { "name": "y00eunji", "url": "https://github.com/y00eunji" },
+  "homepage": "https://github.com/y00eunji/viewport-kit",
+  "repository": "https://github.com/y00eunji/viewport-kit",
+  "license": "MIT",
+  "keywords": ["responsive","breakpoints","container-queries","fluid-typography","css","react"]
+}

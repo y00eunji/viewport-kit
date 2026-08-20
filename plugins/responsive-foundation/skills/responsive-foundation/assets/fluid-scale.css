@@ -1,0 +1,53 @@
+/* Fluid type and space scales.
+ *
+ * Values interpolate linearly between a 320px and a 1280px viewport, then clamp.
+ * Derivation for each value (already applied — do not recalculate the ones below):
+ *
+ *   slope     = (maxPx - minPx) / (1280 - 320)
+ *   intercept = minPx - slope * 320
+ *   clamp( minRem, (intercept / 16)rem + (slope * 100)vw, maxRem )
+ *
+ * Type scale ratio 1.2 (mobile) → 1.25 (desktop); base 16px → 18px.
+ * A ratio that grows with the viewport keeps headings emphatic on a large screen
+ * without making them overwhelming on a phone.
+ *
+ * Extend with the formula above rather than picking a number that looks right —
+ * an off-scale step is visible next to the ones around it.
+ */
+
+:root {
+  --step--1: clamp(0.8333rem, 0.811rem + 0.1115vw, 0.9rem);
+  --step-0:  clamp(1rem, 0.9583rem + 0.2083vw, 1.125rem);
+  --step-1:  clamp(1.2rem, 1.1313rem + 0.3438vw, 1.4063rem);
+  --step-2:  clamp(1.44rem, 1.3341rem + 0.5297vw, 1.7578rem);
+  --step-3:  clamp(1.728rem, 1.5716rem + 0.7821vw, 2.1973rem);
+  --step-4:  clamp(2.0736rem, 1.8493rem + 1.1216vw, 2.7466rem);
+
+  --space-2xs: clamp(0.25rem, 0.2292rem + 0.1042vw, 0.3125rem);
+  --space-xs:  clamp(0.5rem, 0.4792rem + 0.1042vw, 0.5625rem);
+  --space-s:   clamp(1rem, 0.9583rem + 0.2083vw, 1.125rem);
+  --space-m:   clamp(1.5rem, 1.4375rem + 0.3125vw, 1.6875rem);
+  --space-l:   clamp(2rem, 1.9167rem + 0.4167vw, 2.25rem);
+  --space-xl:  clamp(3rem, 2.875rem + 0.625vw, 3.375rem);
+  --space-2xl: clamp(4rem, 3.8333rem + 0.8333vw, 4.5rem);
+
+  /* Line length, independent of how wide the container is. A long line is hard to
+   * read no matter how much screen is available — the eye loses the return sweep.
+   * Cap the measure; use the leftover width for margin or a second column. */
+  --measure: 65ch;
+}
+
+.prose { max-inline-size: var(--measure); }
+
+/* Component-local fluid sizing: same idea, scoped to the container instead of the
+ * viewport. A card in a narrow sidebar gets small type even on a 4K display,
+ * because 1cqi is 1% of the CONTAINER's inline size, not the window's. */
+@supports (width: 1cqi) {
+  .card {
+    container-type: inline-size;
+  }
+  .card__title {
+    /* cqi replaces vw; the clamp bounds keep it sane at both extremes. */
+    font-size: clamp(1.2rem, 0.9rem + 2cqi, 1.75rem);
+  }
+}
