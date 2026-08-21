@@ -54,6 +54,22 @@ Read exactly one file from `references/`, matching the stack:
 
 Do not read all four. They contradict each other on purpose.
 
+### When the project is empty
+
+A repo with no `package.json`, no stylesheets, and an audit that exits `2` is not a
+failed audit — there is simply nothing to adopt yet. Do not treat the empty result as a
+clean bill of health, and do not guess a stack from the directory name.
+
+The stack decision comes **before** this skill can act, because it decides what the
+token layer even looks like: `@custom-media` in a stylesheet, or `--breakpoint-*` inside
+`@theme`. Ask once, in one question — framework and whether Tailwind is in — then follow
+the table above and continue from Step 2 with the default 40/48/64/80/96rem scale.
+
+If the framework is already being scaffolded in this same session, wait for the
+scaffold to finish and re-run the audit against the generated source. A fresh
+`create-next-app` ships its own `globals.css`, and reading it is the difference between
+extending the project's styles and fighting them.
+
 ---
 
 ## Step 2 — The token layer
@@ -241,7 +257,9 @@ Wire the audit into `package.json`:
 }
 ```
 
-`audit:breakpoints` exits `1` on findings, so it drops into CI unchanged.
+`audit:breakpoints` exits `1` on findings and `2` when it found no files to scan
+at all — both fail CI, but `2` means the path is wrong or the project has no
+styles yet, not that the code is clean.
 
 ---
 

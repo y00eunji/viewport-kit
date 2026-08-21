@@ -126,6 +126,16 @@ const byCount = (map) => [...map.entries()].sort((a, b) => b[1].length - a[1].le
 
 log(`\nscanned ${files.length} file(s) under ${srcDir}\n`);
 
+/* Nothing scanned is not "clean" — it is "did not audit". Reporting ok here
+ * hides a typo'd path just as thoroughly as it hides a greenfield repo, and a
+ * check that silently passes is worse than no check. Exit 2 so CI still fails
+ * while callers can tell this apart from real findings. */
+if (files.length === 0) {
+  log(`      no matching source files. Either ${srcDir} is the wrong path, or`);
+  log('      this project has no styles yet — set the foundation up first.\n');
+  process.exit(2);
+}
+
 if (mediaHits.size) {
   log('FAIL  hardcoded lengths in @media conditions');
   for (const [value, places] of byCount(mediaHits)) {
