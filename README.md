@@ -12,6 +12,9 @@ Frontend engineering skills for [Claude Code](https://claude.com/claude-code).
 /plugin install responsive-foundation@viewport-kit
 ```
 
+Updates are not automatic — run `/plugin marketplace update viewport-kit` to pull the
+latest version.
+
 ## Plugins
 
 ### responsive-foundation
